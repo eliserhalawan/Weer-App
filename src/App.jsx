@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
+import Forecast from './components/Forecast';
+import ForecastDaily from './components/ForecastDaily';
 
 export default function App() {
   const [query, setQuery] = useState("");
@@ -45,7 +47,7 @@ export default function App() {
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white flex items-start justify-center p-6"
          style={{ backgroundImage: "url('/src/assets/bg.jpg')", backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: 'cover' }}>
 
-      <div className="w-full max-w-2xl bg-white/60 backdrop-blur-sm rounded-2xl shadow-xl p-6">
+      <div className="w-full max-w-3xl bg-white/60 backdrop-blur-sm rounded-2xl shadow-xl p-6">
         <header className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-semibold">Weer App</h1>
           </header>   
@@ -74,8 +76,8 @@ export default function App() {
             </div>
           )}
 
-          {weather ? (
-            <div className="text-center border border-sky-300 rounded-lg p-6 shadow-md">
+          {weather ?(
+            <div className="text-center  bg-white/60 backdrop-blur-sm border border-sky-300  rounded-lg p-6 shadow-md">
              <div className ="flex items-center justify-center gap-4">
                <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
                   alt={weather.weather[0].description}
@@ -85,11 +87,12 @@ export default function App() {
               
                <div> 
                  <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <span class="material-symbols-outlined">location_on
+                  <span class="material-symbols-outlined text-green-900">location_on
 
                  </span>
                   {weather.name}, {weather.sys?.country}</h2>
                  <p className="text-3xl font-bold">{Math.round(weather.main.temp)}°C</p>
+                 <p className="text-sm text-gray-600">Max : {Math.round(weather.main.temp_max)}°C / Min: {Math.round(weather.main.temp_min)}°C</p>
                  <p className="text-sm text-gray-600 capitalize">{weather.weather[0].description}</p>
                </div>
              </div>
@@ -97,17 +100,17 @@ export default function App() {
             <ul className="mt-4 grid grid-cols-2 gap-4 text-sm text-black-700 ">
 
               <li className="font-medium p-3 border shadow-xl rounded-lg flex items-center gap-2">
-                <span class="material-symbols-outlined text-xl">thermostat</span>
+                <span class="material-symbols-outlined text-xl text-orange-500">thermostat</span>
                 Gevoelstemperatuur: {Math.round(weather.main.feels_like)}°C
                 </li>
 
               <li className="font-medium p-3 border  shadow-xl rounded-lg flex items-center gap-2">
-                <span class="material-symbols-outlined text-xl">water_drop</span>
+                <span class="material-symbols-outlined text-xl text-blue-500">water_drop</span>
                 Luchtvochtigheid: {weather.main.humidity}%
                 </li>
 
               <li className="font-medium p-3 border shadow-xl rounded-lg flex items-center gap-2">
-                <span class="material-symbols-outlined text-xl">air</span>
+                <span class="material-symbols-outlined text-xl text-sky-500">air</span>
                 Wind: {Math.round(weather.wind.speed)} m/s
                 </li>
 
@@ -117,7 +120,7 @@ export default function App() {
                 </li>
 
             </ul>
-           </div>        
+           </div>
           ) : (
             <div className=" text-black-600 flex flex-col"
                  style={{ backgroundImage: "url('/src/assets/search-city.png')", backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: '350px' }}>
@@ -125,6 +128,8 @@ export default function App() {
               <p className=" font-semibold text-center">Bekijk de weersomstandigheden van de stad</p>
             </div>
           )}
+          {weather && <Forecast city={weather.name} />}
+          {weather && <ForecastDaily city={weather.name} />}
       </div>
    </div>
 
