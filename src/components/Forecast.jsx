@@ -5,6 +5,20 @@ export default function Forecast ({ city }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    const getWeatherIcon = (code) => {
+  
+  if (code >= 200 && code < 300) return '⛈️';
+  if (code >= 300 && code < 400) return '🌧️'; 
+  if (code >= 500 && code < 600) return '🌧️'; 
+  if (code >= 600 && code < 700) return '🌨️';
+  if (code >= 700 && code < 800) return '🌫️'; 
+  if (code === 800) return '☀️'; 
+  if (code === 801) return '🌤️'; 
+  if (code === 802) return '⛅'; 
+  if (code > 802) return '☁️'; 
+  return '☀️';
+};
+
     useEffect(() => {
         if (!city) return;
 
@@ -45,7 +59,7 @@ export default function Forecast ({ city }) {
     <h2 className="text-xl font-semibold mb-4">3-uur verwachting</h2>
 
     {/* Horizontale scroll-container */}
-    <div className="flex gap-4 overflow-x-auto pb-2">
+    <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
       {forecast.list.slice(0, 8).map((item) => (
         <div
           key={item.dt}
@@ -53,11 +67,9 @@ export default function Forecast ({ city }) {
         >
           <p className="font-medium">{item.dt_txt.slice(11, 16)}</p>
 
-          <img
-            src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
-            alt={item.weather[0].description}
-            className="mx-auto"
-          />
+          <div className="text-8xl drop-shadow-lg justify-center flex items-center my-2">
+                   {getWeatherIcon(item.weather[0].id)}
+                </div>
 
           <p className="text-lg font-semibold">{Math.round(item.main.temp)}°C</p>
           <p className="text-sm text-gray-600 capitalize">

@@ -31,7 +31,20 @@ export default function App() {
         setLoading(false);
       }
     }
+
+    const getWeatherIcon = (code) => {
   
+  if (code >= 200 && code < 300) return '⛈️'; 
+  if (code >= 300 && code < 400) return '🌧️'; 
+  if (code >= 500 && code < 600) return '🌧️'; 
+  if (code >= 600 && code < 700) return '🌨️'; 
+  if (code >= 700 && code < 800) return '🌫️'; 
+  if (code === 800) return '☀️';
+  if (code === 801) return '🌤️'; 
+  if (code === 802) return '⛅'; 
+  if (code > 802) return '☁️'; 
+  return '☀️';
+};
     function handleSubmit(event) {
       event.preventDefault();
       if (!query.trim()) {
@@ -40,6 +53,45 @@ export default function App() {
       }
       getWeather(query.trim());
     }
+
+function getWeatherByLocation() {
+
+  setLoading(true);
+  setError(null);
+  setWeather(null);
+
+  if (!navigator.geolocation) {
+    setError("Geolocatie wordt niet ondersteund door uw browser");
+    return;
+  }    
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      try {
+        const { latitude, longitude } = position.coords;
+        const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric&lang=nl`;
+
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Weergegevens niet gevonden voor uw locatie");
+        }
+
+        const data = await response.json();
+        setWeather(data);
+        setQuery(data.name);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    (_error) => {
+      setLoading(false);
+      setError("Toestemming voor locatie geweigerd");
+    }
+  );
+}
 
       
   
@@ -64,8 +116,15 @@ export default function App() {
               type="submit"
               className="px-4 py-2 bg-sky-500 text-white font-medium hover:bg-sky-600 rounded-lg flex items-center gap-2"
               disabled={loading}
-            ><span class="material-symbols-outlined">search</span>
-              
+            ><span class="material-symbols-outlined">search</span>   
+            </button>
+            <button
+              type="button"
+              onClick={getWeatherByLocation}
+              className="px-4 py-2 bg-green-500 text-white font-medium hover:bg-green-600 rounded-lg flex items-center gap-2"
+              disabled={loading}
+            >
+              <span class="material-symbols-outlined">my_location</span>
             </button>
           </form>
 
@@ -77,12 +136,11 @@ export default function App() {
           )}
 
           {weather ?(
-            <div className="text-center  bg-white/60 backdrop-blur-sm border border-sky-300  rounded-lg p-6 shadow-md">
+            <div className="text-center bg-gradient-to-b from-sky-50 to-white backdrop-blur-sm rounded-lg p-6 shadow-xl">
              <div className ="flex items-center justify-center gap-4">
-               <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
-                  alt={weather.weather[0].description}
-                  className="w-40 h-40"
-                />
+                <div className="text-8xl drop-shadow-lg">
+                   {getWeatherIcon(weather.weather[0].id)}
+                </div>
                 
               
                <div> 
@@ -111,7 +169,7 @@ export default function App() {
 
               <li className="font-medium p-3 border shadow-xl rounded-lg flex items-center gap-2">
                 <span class="material-symbols-outlined text-xl text-sky-500">air</span>
-                Wind: {Math.round(weather.wind.speed)} m/s
+                Wind: {Math.round(weather.wind.speed * 3.6)} km/u
                 </li>
 
               <li className="font-medium p-3 border border-black-300 shadow-xl rounded-lg flex items-center gap-2">

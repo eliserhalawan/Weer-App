@@ -101,13 +101,13 @@ export default function Forecast({ city }) {
   if (forecast.length === 0) return null;
 
   return (
-    <div className="mt-6 mb-6 p-6 backdrop-blur-sm rounded-2xl border border-sky-300 shadow-xl">
+    <div className="mt-6 mb-6 p-6 bg-gradient-to-b from-sky-50 to-white backdrop-blur-sm rounded-2xl shadow-xl">
       <h3 className="text-2xl font-semibold mb-6 flex items-center gap-2 text-gray-800">
         <span className="material-symbols-outlined text-sky-500">calendar_month</span>
         7-daagse verwachting
       </h3>
       
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+    <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
         {forecast.map((day, i) => (
           <div 
             key={i}
@@ -153,6 +153,6 @@ export default function Forecast({ city }) {
           </div>
         ))}
       </div>
-    </div>
+     </div>
   );
 }
